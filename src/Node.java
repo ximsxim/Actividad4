@@ -1,20 +1,27 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Node<T> {
     private T data;
-    private Node<T> next;
-    private Node<T> prev;
-
-    public Node() { }
+    private List<Node<T>> children;
 
     public Node(T data) {
         this.data = data;
+        this.children = new ArrayList<>();
     }
 
     public T getData() { return data; }
     public void setData(T data) { this.data = data; }
 
-    public Node<T> getNext() { return next; }
-    public void setNext(Node<T> next) { this.next = next; }
+    public List<Node<T>> getChildren() { return children; }
 
-    public Node<T> getPrev() { return prev; }
-    public void setPrev(Node<T> prev) { this.prev = prev; }
+    public void addChild(Node<T> child) {
+        children.add(child);
+    }
+
+    public void removeLastChild() {
+        if (!children.isEmpty()) {
+            children.remove(children.size() - 1);
+        }
+    }
 }

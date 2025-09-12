@@ -1,27 +1,49 @@
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Autor: Fernanda Ximena Garcia Salazar
+ * Fecha: 11/09/2025
+ * Descripción: Clase que representa un nodo del árbol binario de búsqueda para empleados.
+ */
+public class Node {
+    private Empleado data;
+    private Node izquierda;
+    private Node derecha;
 
-public class Node<T> {
-    private T data;
-    private List<Node<T>> children;
+    // Constructor por defecto
+    public Node() {
+        this.data = null;
+        this.izquierda = null;
+        this.derecha = null;
+    }
 
-    public Node(T data) {
+    // Constructor con parámetros
+    public Node(Empleado data) {
         this.data = data;
-        this.children = new ArrayList<>();
+        this.izquierda = null;
+        this.derecha = null;
     }
 
-    public T getData() { return data; }
-    public void setData(T data) { this.data = data; }
-
-    public List<Node<T>> getChildren() { return children; }
-
-    public void addChild(Node<T> child) {
-        children.add(child);
+    // Getters y Setters
+    public Empleado getData() { 
+        return data; 
+    }
+    
+    public void setData(Empleado data) { 
+        this.data = data; 
     }
 
-    public void removeLastChild() {
-        if (!children.isEmpty()) {
-            children.remove(children.size() - 1);
-        }
+    public Node getIzquierda() { 
+        return izquierda; 
+    }
+    
+    public void setIzquierda(Node izquierda) { 
+        this.izquierda = izquierda; 
+    }
+
+    public Node getDerecha() { 
+        return derecha; 
+    }
+    
+    public void setDerecha(Node derecha) { 
+        this.derecha = derecha; 
     }
 }

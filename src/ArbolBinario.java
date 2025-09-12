@@ -15,6 +15,7 @@ public class ArbolBinario {
     private PrintWriter logWriter;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final String LOG_FILE_PATH = "log_empleados.txt";
+    private boolean enableLogging = true; // controla si se escribe en el log o no
 
     // Constructor por defecto
     public ArbolBinario() {
@@ -26,6 +27,11 @@ public class ArbolBinario {
     public ArbolBinario(String logFilePath) {
         raiz = null;
         inicializarLog(logFilePath);
+    }
+
+    // Permite encender o apagar el log
+    public void setEnableLogging(boolean enableLogging) {
+        this.enableLogging = enableLogging;
     }
 
     private void inicializarLog() {
@@ -41,7 +47,7 @@ public class ArbolBinario {
         }
     }
 
-    // Método para insertar un empleado
+    // Método para insertar un empleado en el árbol
     public void insertar(Empleado empleado) {
         if (empleado == null) {
             log("Error: Intento de insertar empleado nulo");
@@ -66,8 +72,7 @@ public class ArbolBinario {
         } else if (empleado.getId() > nodo.getData().getId()) {
             nodo.setDerecha(insertarRec(nodo.getDerecha(), empleado));
         }
-        // Si los IDs son iguales, no insertamos 
-        
+        // Si el ID es igual, no se inserta para evitar duplicados
         return nodo;
     }
 
@@ -91,11 +96,10 @@ public class ArbolBinario {
         if (nodo == null) {
             return null;
         }
-        
         if (nodo.getData().getId() == id) {
             return nodo.getData();
         }
-        
+        // Si el ID es menor, busca a la izquierda, si no, a la derecha
         return id < nodo.getData().getId() 
             ? buscarRec(nodo.getIzquierda(), id) 
             : buscarRec(nodo.getDerecha(), id);
@@ -128,29 +132,21 @@ public class ArbolBinario {
         } else if (id > nodo.getData().getId()) {
             nodo.setDerecha(eliminarRec(nodo.getDerecha(), id));
         } else {
-            // Nodo encontrado para eliminar
-            
-            // Caso 1: Nodo sin hijos
+            // Caso 1: nodo sin hijos
             if (nodo.getIzquierda() == null && nodo.getDerecha() == null) {
                 return null;
             }
-            
-            // Caso 2: Nodo con un solo hijo
+            // Caso 2: nodo con un hijo
             if (nodo.getIzquierda() == null) {
                 return nodo.getDerecha();
             } else if (nodo.getDerecha() == null) {
                 return nodo.getIzquierda();
             }
-
-            // Caso 3: Nodo con dos hijos
-            // Encontrar el sucesor inorden 
+            // Caso 3: nodo con dos hijos
             Empleado sucesor = encontrarMinimo(nodo.getDerecha());
             nodo.setData(sucesor);
-            
-            // Eliminar el sucesor
             nodo.setDerecha(eliminarRec(nodo.getDerecha(), sucesor.getId()));
         }
-        
         return nodo;
     }
 
@@ -161,22 +157,20 @@ public class ArbolBinario {
         return nodo.getData();
     }
 
-    // Métodos de recorrido
+    // Métodos de recorrido: visitan todos los nodos en distintos órdenes
     public void recorridoPreorden() {
         log("Recorrido Preorden iniciado");
         System.out.println("== RECORRIDO PREORDEN ==");
-        
         if (raiz == null) {
             System.out.println(" El árbol está vacío ");
         } else {
             preordenRec(raiz);
         }
-        
     }
 
     private void preordenRec(Node nodo) {
         if (nodo != null) {
-            System.out.println( String.format("%-36s", nodo.getData()));
+            System.out.println(String.format("%-36s", nodo.getData()));
             preordenRec(nodo.getIzquierda());
             preordenRec(nodo.getDerecha());
         }
@@ -185,13 +179,11 @@ public class ArbolBinario {
     public void recorridoInorden() {
         log("Recorrido Inorden iniciado");
         System.out.println("== RECORRIDO INORDEN ==");
-        
         if (raiz == null) {
             System.out.println("El árbol está vacío");
         } else {
             inordenRec(raiz);
         }
-        
     }
 
     private void inordenRec(Node nodo) {
@@ -205,33 +197,29 @@ public class ArbolBinario {
     public void recorridoPostorden() {
         log("Recorrido Postorden iniciado");
         System.out.println("== RECORRIDO POSTORDEN ==");
-        
         if (raiz == null) {
             System.out.println("El árbol está vacío");
         } else {
             postordenRec(raiz);
         }
-        
     }
 
     private void postordenRec(Node nodo) {
         if (nodo != null) {
             postordenRec(nodo.getIzquierda());
             postordenRec(nodo.getDerecha());
-            System.out.println( String.format("%-36s", nodo.getData()));
+            System.out.println(String.format("%-36s", nodo.getData()));
         }
     }
 
-    // Método para visualizar el árbol de forma gráfica
+    // Visualización del árbol en forma gráfica con ramas
     public void visualizarArbol() {
         log("Visualización del árbol iniciada");
         System.out.println("== VISUALIZACIÓN DEL ÁRBOL ==");
-        
         if (raiz == null) {
             System.out.println("    El árbol está vacío");
             return;
         }
-        
         imprimirArbolVisual(raiz, "", true);
     }
 
@@ -239,24 +227,19 @@ public class ArbolBinario {
         if (nodo != null) {
             System.out.println(prefijo + (esUltimo ? "└── " : "├── ") + 
                              "ID:" + nodo.getData().getId() + " (" + nodo.getData().getNombre() + ")");
-            
-            // Contar hijos
             boolean tieneIzquierda = nodo.getIzquierda() != null;
             boolean tieneDerecha = nodo.getDerecha() != null;
-            
             String nuevoPrefijo = prefijo + (esUltimo ? "    " : "│   ");
-            
             if (tieneIzquierda) {
                 imprimirArbolVisual(nodo.getIzquierda(), nuevoPrefijo, !tieneDerecha);
             }
-            
             if (tieneDerecha) {
                 imprimirArbolVisual(nodo.getDerecha(), nuevoPrefijo, true);
             }
         }
     }
 
-    // Método auxiliar para calcular la altura del árbol
+    // Calcula la altura del árbol (número máximo de niveles)
     public int altura() {
         return alturaRec(raiz);
     }
@@ -268,7 +251,7 @@ public class ArbolBinario {
         return 1 + Math.max(alturaRec(nodo.getIzquierda()), alturaRec(nodo.getDerecha()));
     }
 
-    // Método para contar nodos
+    // Cuenta el número total de nodos en el árbol
     public int contarNodos() {
         return contarNodosRec(raiz);
     }
@@ -280,12 +263,12 @@ public class ArbolBinario {
         return 1 + contarNodosRec(nodo.getIzquierda()) + contarNodosRec(nodo.getDerecha());
     }
 
-    // Método para verificar si el árbol está vacío
+    // Verifica si el árbol está vacío
     public boolean estaVacio() {
         return raiz == null;
     }
 
-    // Método para obtener estadísticas del árbol
+    // Muestra estadísticas generales del árbol
     public void mostrarEstadisticas() {
         System.out.println("\n=== ESTADISTICAS DEL ARBOL ===");
         System.out.println("Total de empleados: " + contarNodos());
@@ -294,8 +277,9 @@ public class ArbolBinario {
         System.out.println("==============================");
     }
 
-    // Método para registrar en el log con fecha y hora
+    // Escribe un mensaje en el log con fecha y hora
     private void log(String mensaje) {
+        if (!enableLogging) return; // se puede desactivar para medir rendimiento
         if (logWriter != null) {
             try {
                 String fechaHora = LocalDateTime.now().format(formatter);
@@ -307,7 +291,7 @@ public class ArbolBinario {
         }
     }
 
-    // Cerrar log
+    // Cierra el archivo de log
     public void cerrarLog() {
         if (logWriter != null) {
             try {

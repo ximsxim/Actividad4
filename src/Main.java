@@ -16,9 +16,11 @@ public class Main {
         System.out.println("=== SISTEMA DE GESTION DE EMPLEADOS ===");
         
         try {
-            System.out.println("Cargando sistema con 1000 empleados...");
+            System.out.println("Cargando sistema con 100000 empleados...");
+            // Se cargan muchos empleados para que se note la diferencia de rendimiento
             cargarEmpleadosIniciales();
             
+            // Muestra el menú principal
             mostrarMenuPrincipal();
             
         } catch (Exception e) {
@@ -30,6 +32,7 @@ public class Main {
     }
 
     private static void cargarEmpleadosIniciales() {
+        // Listas de nombres y apellidos para generar empleados aleatorios
         String[] nombres = {
             "Ana", "Carlos", "Elena", "Javier", "Laura", "Miguel", 
             "Patricia", "Ricardo", "Sofia", "Victor", "Isabella", 
@@ -47,10 +50,11 @@ public class Main {
         
         Set<Integer> idsUsados = new HashSet<>();
         
-        for (int i = 0; i < 1000; i++) {
+        // Se generan 100000 empleados con IDs únicos
+        for (int i = 0; i < 100000; i++) {
             int id;
             do {
-                id = RANDOM.nextInt(9000) + 1000;
+                id = RANDOM.nextInt(900000) + 1000;
             } while (idsUsados.contains(id));
             idsUsados.add(id);
             
@@ -80,32 +84,15 @@ public class Main {
             opcion = leerOpcion();
             
             switch (opcion) {
-                case 1:
-                    buscarEmpleado();
-                    break;
-                case 2:
-                    agregarEmpleado();
-                    break;
-                case 3:
-                    eliminarEmpleado();
-                    break;
-                case 4:
-                    mostrarRecorridos();
-                    break;
-                case 5:
-                    visualizarArbol();
-                    break;
-                case 6:
-                    compararEficiencia();
-                    break;
-                case 7:
-                    mostrarEstadisticas();
-                    break;
-                case 8:
-                    System.out.println("Saliendo...");
-                    break;
-                default:
-                    System.out.println("Opcion no valida.");
+                case 1: buscarEmpleado(); break;
+                case 2: agregarEmpleado(); break;
+                case 3: eliminarEmpleado(); break;
+                case 4: mostrarRecorridos(); break;
+                case 5: visualizarArbol(); break;
+                case 6: compararEficiencia(); break;
+                case 7: mostrarEstadisticas(); break;
+                case 8: System.out.println("Saliendo..."); break;
+                default: System.out.println("Opcion no valida.");
             }
             
             if (opcion != 8) {
@@ -135,6 +122,7 @@ public class Main {
             int id = scanner.nextInt();
             scanner.nextLine();
             
+            // Medición del tiempo de búsqueda en árbol
             long inicioTiempo = System.nanoTime();
             Empleado empleado = arbolEmpleados.buscar(id);
             long finTiempo = System.nanoTime();
@@ -210,7 +198,7 @@ public class Main {
             System.out.print("\nEsta seguro de que desea eliminar este empleado? (S/N): ");
             String confirmacion = scanner.nextLine().trim().toUpperCase();
             
-            if (confirmacion.equals("S") || confirmacion.equals("si")) {
+            if (confirmacion.equals("S") || confirmacion.equals("SI")) {
                 boolean eliminado = arbolEmpleados.eliminar(id);
                 if (eliminado) {
                     listaEmpleados.removeIf(emp -> emp.getId() == id);
@@ -240,17 +228,10 @@ public class Main {
             scanner.nextLine();
             
             switch (opcion) {
-                case 1:
-                    arbolEmpleados.recorridoPreorden();
-                    break;
-                case 2:
-                    arbolEmpleados.recorridoInorden();
-                    break;
-                case 3:
-                    arbolEmpleados.recorridoPostorden();
-                    break;
-                default:
-                    System.out.println("Opcion no valida.");
+                case 1: arbolEmpleados.recorridoPreorden(); break;
+                case 2: arbolEmpleados.recorridoInorden(); break;
+                case 3: arbolEmpleados.recorridoPostorden(); break;
+                default: System.out.println("Opcion no valida.");
             }
         } catch (InputMismatchException e) {
             System.out.println("Debe ingresar un numero valido.");
@@ -260,6 +241,7 @@ public class Main {
 
     private static void visualizarArbol() {
         System.out.println("\n--- VISUALIZACION DEL ARBOL ---");
+        // Muestra el árbol en forma gráfica
         arbolEmpleados.visualizarArbol();
     }
 
@@ -283,7 +265,10 @@ public class Main {
             int repeticiones = 100000;
             System.out.println("Realizando " + repeticiones + " busquedas de cada tipo...");
             
-            // Medir tiempo de búsqueda en árbol binario
+            // Se apaga el log para que no afecte los tiempos
+            arbolEmpleados.setEnableLogging(false);
+            
+            // Prueba con árbol binario
             long inicioArbol = System.nanoTime();
             for (int i = 0; i < repeticiones; i++) {
                 arbolEmpleados.buscar(id);
@@ -291,13 +276,16 @@ public class Main {
             long finArbol = System.nanoTime();
             double tiempoArbol = (finArbol - inicioArbol) / 1_000_000.0;
             
-            // Medir tiempo de búsqueda secuencial en lista
+            // Prueba con lista secuencial
             long inicioLista = System.nanoTime();
             for (int i = 0; i < repeticiones; i++) {
                 buscarEnLista(id);
             }
             long finLista = System.nanoTime();
             double tiempoLista = (finLista - inicioLista) / 1_000_000.0;
+            
+            // Se vuelve a activar el log
+            arbolEmpleados.setEnableLogging(true);
             
             mostrarResultadosComparacion(repeticiones, tiempoArbol, tiempoLista, id);
             
@@ -308,6 +296,7 @@ public class Main {
     }
 
     private static Empleado buscarEnLista(int id) {
+        // Búsqueda secuencial en la lista
         for (Empleado empleado : listaEmpleados) {
             if (empleado.getId() == id) {
                 return empleado;

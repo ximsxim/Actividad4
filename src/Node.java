@@ -22,27 +22,32 @@ public class Node {
         this.derecha = null;
     }
 
-    // Getters y Setters
+    // Getter que devuelve el empleado guardado en el nodo
     public Empleado getData() { 
         return data; 
     }
     
+    // Setter que asigna un empleado al nodo
     public void setData(Empleado data) { 
         this.data = data; 
     }
 
+    // Devuelve el hijo izquierdo
     public Node getIzquierda() { 
         return izquierda; 
     }
     
+    // Asigna un hijo izquierdo
     public void setIzquierda(Node izquierda) { 
         this.izquierda = izquierda; 
     }
 
+    // Devuelve el hijo derecho
     public Node getDerecha() { 
         return derecha; 
     }
     
+    // Asigna un hijo derecho
     public void setDerecha(Node derecha) { 
         this.derecha = derecha; 
     }
